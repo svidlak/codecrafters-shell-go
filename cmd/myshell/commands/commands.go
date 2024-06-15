@@ -30,5 +30,4 @@ func echo(input []string) {
 
 func typeFunc(input []string) {
 	fmt.Print(input[0] + " is a shell builtin")
-	fmt.Print("\n")
 }
