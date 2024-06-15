@@ -10,6 +10,7 @@ import (
 var Commands_list = map[string]func([]string){
 	"exit": exit,
 	"echo": echo,
+	"type": typeFunc,
 }
 
 func exit(input []string) {
@@ -25,4 +26,8 @@ func exit(input []string) {
 func echo(input []string) {
 	line := strings.Join(input, " ")
 	fmt.Print(line + "\n")
+}
+
+func typeFunc(input []string) {
+	fmt.Print(input[0] + " is a shell builtin \n")
 }
