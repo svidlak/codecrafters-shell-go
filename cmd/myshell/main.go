@@ -35,10 +35,15 @@ func getInput(input string) {
 
 	val, ok := commandslist.Commands[command]
 
-	if !ok {
-		fmt.Println(command + ": command not found")
+	if ok {
+
+		val(values[1:])
 		return
 	}
 
-	val(values[1:])
+	err := commandslist.RunExternalExec(values)
+
+	if err != nil {
+		fmt.Println(command + ": command not found")
+	}
 }

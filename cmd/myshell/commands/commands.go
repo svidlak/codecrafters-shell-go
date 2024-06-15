@@ -1,8 +1,10 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -98,4 +100,25 @@ func (cp *CommandProcessor) findExec(input string) (string, bool) {
 	}
 
 	return "", false
+}
+
+func (cp *CommandProcessor) RunExternalExec(input []string) error {
+	programName := input[0]
+	programParams := input[1]
+
+	filePath, exists := cp.findExec(programName)
+
+	if !exists {
+		return errors.New("executable not found")
+	}
+
+	cmd, err := exec.Command(filePath, programParams).Output()
+
+	if err != nil {
+		return errors.New("executable returned an error")
+	}
+
+	output := string(cmd)
+	fmt.Print(output + "\n")
+	return nil
 }
