@@ -9,7 +9,10 @@ import (
 	"github.com/codecrafters-io/shell-starter-go/cmd/myshell/commands"
 )
 
+var commandslist *commands.CommandProcessor
+
 func main() {
+	commandslist = commands.NewCommandProcessor()
 	// Wait for user input
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
@@ -30,7 +33,7 @@ func getInput(input string) {
 
 	command := values[0]
 
-	val, ok := commands.Commands_list[command]
+	val, ok := commandslist.Commands[command]
 
 	if !ok {
 		fmt.Println(command + ": command not found")
