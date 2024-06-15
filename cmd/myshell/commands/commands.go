@@ -103,8 +103,12 @@ func (cp *CommandProcessor) findExec(input string) (string, bool) {
 }
 
 func (cp *CommandProcessor) RunExternalExec(input []string) error {
+	programParams := ""
 	programName := input[0]
-	programParams := input[1]
+
+	if len(input) > 1 {
+		programParams = input[1]
+	}
 
 	filePath, exists := cp.findExec(programName)
 
