@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/codecrafters-io/shell-starter-go/cmd/myshell/commands"
 )
@@ -20,10 +21,13 @@ func main() {
 }
 
 func getInput(input string) {
-	val, ok := commands.Commands_list[input]
+	values := strings.Split(input, "\n")
+	command := values[0]
+
+	val, ok := commands.Commands_list[command]
 
 	if !ok {
-		fmt.Println(input + ": command not found")
+		fmt.Println(command + ": command not found")
 		return
 	}
 
