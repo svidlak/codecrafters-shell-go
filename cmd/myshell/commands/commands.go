@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+var workingDirectory string
+
 type CommandProcessor struct {
 	Commands map[string]func([]string)
 	Path     []string
@@ -18,6 +20,7 @@ func NewCommandProcessor() *CommandProcessor {
 	cp := &CommandProcessor{
 		Commands: make(map[string]func([]string)),
 	}
+	cp.initWorkingDir()
 	cp.initCommands()
 	cp.initPath()
 
@@ -30,11 +33,20 @@ func (cp *CommandProcessor) initPath() {
 	cp.Path = splitPath
 }
 
+func (cp *CommandProcessor) initWorkingDir() {
+	path, err := os.Getwd()
+	if err != nil {
+		panic("cannot read root dir")
+	}
+	workingDirectory = path
+}
+
 func (cp *CommandProcessor) initCommands() {
 	cp.Commands["exit"] = cp.exitFunc
 	cp.Commands["echo"] = cp.echoFunc
 	cp.Commands["type"] = cp.typeFunc
 	cp.Commands["pwd"] = cp.pwdFunc
+	cp.Commands["cd"] = cp.cdFunc
 }
 
 func (cp *CommandProcessor) RunCommand(command string, args []string) {
@@ -91,11 +103,7 @@ func (cp *CommandProcessor) typeFunc(input []string) {
 }
 
 func (cp *CommandProcessor) pwdFunc(_ []string) {
-	path, err := os.Getwd()
-	if err != nil {
-		panic("cannot read root dir")
-	}
-	fmt.Print(path + "\n")
+	fmt.Print(workingDirectory + "\n")
 }
 
 func (cp *CommandProcessor) findExec(input string) (string, bool) {
@@ -135,4 +143,17 @@ func (cp *CommandProcessor) RunExternalExec(input []string) error {
 	fmt.Print(output)
 
 	return nil
+}
+
+func (cp *CommandProcessor) cdFunc(input []string) {
+	path := input[0]
+
+	_, err := os.Stat(path)
+
+	if err != nil {
+		fmt.Print("cd: " + path + ": No such file or directory\n")
+		return
+	}
+
+	workingDirectory = path
 }
