@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -148,6 +149,10 @@ func (cp *CommandProcessor) RunExternalExec(input []string) error {
 func (cp *CommandProcessor) cdFunc(input []string) {
 	path := input[0]
 
+	if !strings.HasPrefix(path, "/") {
+		path = workingDirectory + "/" + path
+	}
+
 	_, err := os.Stat(path)
 
 	if err != nil {
@@ -155,5 +160,6 @@ func (cp *CommandProcessor) cdFunc(input []string) {
 		return
 	}
 
-	workingDirectory = path
+	cleanedPath := filepath.Clean(path)
+	workingDirectory = cleanedPath
 }
