@@ -10,14 +10,17 @@ import (
 )
 
 func main() {
-	fmt.Fprint(os.Stdout, "$ ")
 
 	// Wait for user input
-	input, err := bufio.NewReader(os.Stdin).ReadString('\n')
-	if err != nil {
-		panic("bad input")
+	for {
+		fmt.Fprint(os.Stdout, "$ ")
+		input, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		if err != nil {
+			panic("bad input")
+		}
+		getInput(input)
 	}
-	getInput(input)
+
 }
 
 func getInput(input string) {
