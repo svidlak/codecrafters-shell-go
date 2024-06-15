@@ -26,6 +26,8 @@ func main() {
 
 func getInput(input string) {
 	values := strings.Split(input, "\n")
+	values = strings.Split(values[0], " ")
+
 	command := values[0]
 
 	val, ok := commands.Commands_list[command]
@@ -35,5 +37,5 @@ func getInput(input string) {
 		return
 	}
 
-	fmt.Println(val)
+	val(values[1:])
 }
