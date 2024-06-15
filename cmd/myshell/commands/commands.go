@@ -9,6 +9,7 @@ import (
 
 type CommandProcessor struct {
 	Commands map[string]func([]string)
+	Path     []string
 }
 
 func NewCommandProcessor() *CommandProcessor {
@@ -16,7 +17,15 @@ func NewCommandProcessor() *CommandProcessor {
 		Commands: make(map[string]func([]string)),
 	}
 	cp.initCommands()
+	cp.initPath()
+
 	return cp
+}
+
+func (cp *CommandProcessor) initPath() {
+	path := os.Getenv("PATH")
+	splitPath := strings.Split(path, ":")
+	cp.Path = splitPath
 }
 
 func (cp *CommandProcessor) initCommands() {
@@ -65,8 +74,28 @@ func (cp *CommandProcessor) typeFunc(input []string) {
 
 	_, ok := cp.Commands[input[0]]
 	if !ok {
+		filePath, exists := cp.findExec(input[0])
+
+		if exists {
+			fmt.Printf("%s is %s\n", input[0], filePath)
+			return
+		}
+
 		fmt.Printf("%s: not found\n", input[0])
 		return
 	}
 	fmt.Printf("%s is a shell builtin\n", input[0])
+}
+
+func (cp *CommandProcessor) findExec(input string) (string, bool) {
+	for _, path := range cp.Path {
+		path := path + "/" + input
+
+		_, err := os.Stat(path)
+		if err == nil {
+			return path, true
+		}
+	}
+
+	return "", false
 }
