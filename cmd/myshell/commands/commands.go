@@ -34,6 +34,7 @@ func (cp *CommandProcessor) initCommands() {
 	cp.Commands["exit"] = cp.exitFunc
 	cp.Commands["echo"] = cp.echoFunc
 	cp.Commands["type"] = cp.typeFunc
+	cp.Commands["pwd"] = cp.pwdFunc
 }
 
 func (cp *CommandProcessor) RunCommand(command string, args []string) {
@@ -87,6 +88,14 @@ func (cp *CommandProcessor) typeFunc(input []string) {
 		return
 	}
 	fmt.Printf("%s is a shell builtin\n", input[0])
+}
+
+func (cp *CommandProcessor) pwdFunc(_ []string) {
+	path, err := os.Getwd()
+	if err != nil {
+		panic("cannot read root dir")
+	}
+	fmt.Print(path + "\n")
 }
 
 func (cp *CommandProcessor) findExec(input string) (string, bool) {
