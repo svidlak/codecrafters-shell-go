@@ -11,6 +11,7 @@ import (
 )
 
 var workingDirectory string
+var homeDirectory string
 
 type CommandProcessor struct {
 	Commands map[string]func([]string)
@@ -21,11 +22,17 @@ func NewCommandProcessor() *CommandProcessor {
 	cp := &CommandProcessor{
 		Commands: make(map[string]func([]string)),
 	}
+	cp.initHomeDir()
 	cp.initWorkingDir()
 	cp.initCommands()
 	cp.initPath()
 
 	return cp
+}
+
+func (cp *CommandProcessor) initHomeDir() {
+	path := os.Getenv("HOME")
+	homeDirectory = path
 }
 
 func (cp *CommandProcessor) initPath() {
@@ -151,8 +158,12 @@ func (cp *CommandProcessor) cdFunc(input []string) {
 
 	if !strings.HasPrefix(path, "/") {
 		path = workingDirectory + "/" + path
-	}
 
+	}
+	if strings.Contains(path, "~") {
+		splitStr := strings.Split(path, "~")
+		path = homeDirectory + splitStr[1]
+	}
 	_, err := os.Stat(path)
 
 	if err != nil {
