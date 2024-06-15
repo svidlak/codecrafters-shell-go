@@ -120,5 +120,6 @@ func (cp *CommandProcessor) RunExternalExec(input []string) error {
 
 	output := string(cmd)
 	fmt.Print(output + "\n")
+
 	return nil
 }
